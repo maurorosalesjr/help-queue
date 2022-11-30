@@ -1,5 +1,6 @@
 import ticketListReducer from '../../reducers/ticket-list-reducer';
 import * as c from './../../actions/ActionTypes';
+import { formatDistanceToNow } from 'date-fns';
 
 
 describe('ticketListReducer', () => {
@@ -24,6 +25,10 @@ describe('ticketListReducer', () => {
     names: 'Ryan & Aimen',
     location: '4b',
     issue: 'Redux action is not working correctly.',
+    timeOpen : new Date(),
+    formattedWaitTime: formatDistanceToNow(new Date(), {
+      addSuffix: true
+    }),
     id: 1
   };
 
@@ -65,4 +70,26 @@ describe('ticketListReducer', () => {
     });
   });
 
+  test('should successfully add a ticket to the ticket list that includes date-fns-formatted wait times', () => {
+    const { names, location, issue, timeOpen, formattedWaitTime, id } = ticketData;
+    action = {
+      type: c.ADD_TICKET,
+      names: names,
+      location: location,
+      issue: issue,
+      timeOpen: timeOpen,
+      formattedWaitTime: formattedWaitTime,
+      id: id
+    };
+    expect(ticketListReducer({}, action)).toEqual({
+      [id] : {
+        names: names,
+        location: location,
+        issue: issue,
+        timeOpen: timeOpen,
+        formattedWaitTime: 'less than a minute ago',
+        id: id
+      }
+    });
+  });
 });
